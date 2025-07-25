@@ -1,0 +1,22 @@
+#!/usr/bin/with-contenv bash
+
+echoprefix="[80-alpine-edge]"
+echo "${echoprefix} Configured Alpine Edge repositories"
+
+# env check
+if [[ -f /sbin/apk ]]; then
+    # Alpine
+    echo "" > /etc/apk/repositories
+    for each in main community testing; do
+        echo "http://dl-cdn.alpinelinux.org/alpine/edge/${each}" >> /etc/apk/repositories
+    done
+    apk update > /dev/null
+    apk upgrade
+    if [[ "${SMA_HWACCEL}" == "true" ]]; then
+        apk add --no-cache \
+            onevpl \
+            onevpl-intel-gpu > /dev/null
+    fi
+fi
+
+exit $?
